@@ -22,10 +22,11 @@
 
   var innerWidth  = width  - margin.left - margin.right;
   var innerHeight = height - margin.top  - margin.bottom;
+  var maxRating = d3.max( data.map(function(d){ return d.rating; }) ) + 1;
 
   // TODO: Input the proper values for the scales
-  var xScale = d3.scale.ordinal().rangeRoundBands([0, 10], 0);
-  var yScale = d3.scale.linear().range([30, 0]);
+  var xScale = d3.scale.ordinal().rangeRoundBands([0, innerWidth], 0);
+  var yScale = d3.scale.linear().range([0, innerHeight]);
 
   // Define the chart
   var chart = d3
@@ -40,7 +41,7 @@
   xScale.domain(data.map(function (d){ return d.name; }));
 
   // TODO: Fix the yScale domain to scale with any ratings range
-  yScale.domain([0, 5]);
+  yScale.domain([maxRating, 0]);
 
   // Note all these values are hard coded numbers
   // TODO:
@@ -48,13 +49,13 @@
   // 2. Update the x, y, width, and height attributes to appropriate reflect this
   chart
     .selectAll(".bar")
-    .data([10, 20, 30, 40])
+    .data(data.map(function(d){ return d.rating; }))
     .enter().append("rect")
     .attr("class", "bar")
-    .attr("x", function(d, i) { return i*100; })
-    .attr("width", 100)
-    .attr("y", function(d) { return 0; })
-    .attr("height", function(d) { return d*10; });
+    .attr("x", function(d, i) { return ((innerWidth / data.length)*i) + 10; })
+    .attr("width", (innerWidth / data.length) - 10)
+    .attr("y", function(d) { return innerHeight - (innerHeight*(d / maxRating)); })
+    .attr("height", function(d) { return innerHeight*(d / maxRating); });
 
   // Orient the x and y axis
   var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
@@ -62,13 +63,17 @@
 
   // TODO: Append X axis
   chart
-    .append("g");
-
+    .append("g")
+    .attr("transform", "translate(" + 0 + "," + innerHeight + ")")
+    .call(xAxis)
+    .selectAll("text")
+    .attr("transform", "rotate(" + -45 + ")")
+    .style("text-anchor", "end");
 
   // TODO: Append Y axis
   chart
-    .append("g");
-
+    .append("g")
+    .call(yAxis);
 
   // ASSIGNMENT PART 1B
   // Grab the delphi data from the server
@@ -77,7 +82,60 @@
       console.log(err);
       return;
     }
-    console.log("Data", data);
+    makeDelphiChart(data);
   });
-
 })(d3);
+
+makeDelphiChart = function(data) {
+  var margin = {top: 20, right: 10, bottom: 100, left: 70},
+      width = 930 - margin.right - margin.left,
+      height = 500 - margin.top - margin.bottom;
+
+  var innerWidth  = width  - margin.left - margin.right;
+  var innerHeight = height - margin.top  - margin.bottom;
+  var maxRating = d3.max( data.map(function(d){ return d.sum; }) );
+
+  var xScale = d3.scale.ordinal().rangeRoundBands([0, innerWidth], 0);
+  var yScale = d3.scale.linear().range([0, innerHeight]);
+
+  // Define the chart
+  var chart = d3
+    .select(".chart")
+    .append("svg")
+    .attr("width", width + margin.right + margin.left)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" +  margin.left + "," + margin.right + ")");
+
+  // Render the chart
+  xScale.domain(data.map(function (d){ return d.gender; }));
+  yScale.domain([maxRating, 0]);
+
+  chart
+    .selectAll(".bar")
+    .data(data.map(function(d){ return d.sum; }))
+    .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", function(d, i) { return ((innerWidth / data.length)*i) + 30; })
+    .attr("width", (innerWidth / data.length) - 50)
+    .attr("y", function(d) { return innerHeight - (innerHeight*(d / maxRating)); })
+    .attr("height", function(d) { return innerHeight*d/maxRating;  });
+
+  // Orient the x and y axis
+  var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+  var yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+  // TODO: Append X axis
+  chart
+    .append("g")
+    .attr("transform", "translate(" + 0 + "," + innerHeight + ")")
+    .call(xAxis)
+    .selectAll("text")
+    .attr("transform", "rotate(" + -45 + ")")
+    .style("text-anchor", "end");
+
+  // TODO: Append Y axis
+  chart
+    .append("g")
+    .call(yAxis);
+};
