@@ -1,7 +1,11 @@
 .chart {
-  display: block;
+  display: inline-block;
   margin-left: auto;
   margin-right: auto;
+}
+
+.chart2 {
+  display: inline-block;
 }
 
 body {
