@@ -7,3 +7,7 @@
 .chart rect {
   fill: steelblue;
 }
+
+.chart rect:hover {
+  fill: orange;
+}
