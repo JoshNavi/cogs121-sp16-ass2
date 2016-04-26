@@ -3,11 +3,12 @@
 
   // ASSIGNMENT PART 1B
   // Grab the delphi data from the server
-  d3.json("/delphidata", function(err, data) {
+  d3.json("/agencycrimes", function(err, data) {
     if (err) {
       console.log(err);
       return;
     }
+    console.log(data);
     makeDelphiChart(data);
   });
 })(d3);
@@ -19,7 +20,7 @@ makeDelphiChart = function(data) {
 
   var innerWidth  = width  - margin.left - margin.right;
   var innerHeight = height - margin.top  - margin.bottom;
-  var maxRating = d3.max( data.map(function(d){ return d.sum; }) );
+  var maxRating = d3.max( data.map(function(d){ return parseInt(d.total); }) );
 
   var xScale = d3.scale.ordinal().rangeRoundBands([0, innerWidth], 0);
   var yScale = d3.scale.linear().range([0, innerHeight]);
@@ -34,12 +35,12 @@ makeDelphiChart = function(data) {
     .attr("transform", "translate(" +  margin.left + "," + margin.right + ")");
 
   // Render the chart
-  xScale.domain(data.map(function (d){ return d.gender; }));
+  xScale.domain(data.map(function (d){ return d.agency; }));
   yScale.domain([maxRating, 0]);
 
   chart
     .selectAll(".bar")
-    .data(data.map(function(d){ return d.sum; }))
+    .data(data.map(function(d){ return d.total; }))
     .enter().append("rect")
     .attr("class", "bar")
     .attr("x", function(d, i) { return ((innerWidth / data.length)*i) + 30; })

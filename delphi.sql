@@ -1,4 +1,4 @@
--- Queries for crime by county
+-- Queries for crime by agency
 SELECT c.agency, COUNT(*) AS total
 FROM cogs121_16_raw.arjis_crimes c
 GROUP BY c.agency
