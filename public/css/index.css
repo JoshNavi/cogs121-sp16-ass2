@@ -5,9 +5,20 @@
 }
 
 .chart2 {
-  display: inline-block;
-  position: relative;
-  top: -15em;
+  float: right;
+  margin-right: 50px;
+}
+
+.chart2 .arc{
+  opacity: 0.7 !important;
+}
+
+.chart2 .arc:hover{
+  opacity: 1.0 !important;
+}
+
+.chart2 .arc:hover text{
+  opacity: 1.0 !important;
 }
 
 body {
