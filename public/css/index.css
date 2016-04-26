@@ -4,10 +4,18 @@
   margin-right: auto;
 }
 
+body {
+  background-color: snow;
+}
+
 .chart rect {
-  fill: steelblue;
+  opacity: 0.7 !important;
 }
 
 .chart rect:hover {
-  fill: orange;
+  opacity: 1.0 !important;
+}
+
+.bar:hover {
+  fill: black;
 }

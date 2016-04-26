@@ -20,10 +20,20 @@ getColor = function(d, max) {
   return color(d/max);
 };
 
+getCountyData = function(agency) {
+  d3.json('/agencies/' + agency, function(err, data) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    console.log(data);
+  });
+}
+
 makeDelphiChart = function(data) {
   var margin = {top: 20, right: 10, bottom: 100, left: 70},
       width = 930 - margin.right - margin.left,
-      height = 500 - margin.top - margin.bottom;
+      height = 800 - margin.top - margin.bottom;
 
   var innerWidth  = width  - margin.left - margin.right;
   var innerHeight = height - margin.top  - margin.bottom;
@@ -50,10 +60,12 @@ makeDelphiChart = function(data) {
     .data(data.map(function(d){ return d.total; }) )
     .enter().append("rect")
     .attr("class", "bar")
+    .attr("id", function (d, i){ return data[i].agency; })
     .attr("x", function(d, i) { return ((innerWidth / data.length)*i) + 30; })
     .attr("width", (innerWidth / data.length) - 50)
     .attr("y", function(d) { return innerHeight - (innerHeight*(d / maxRating)); })
     .attr("height", function(d) { return innerHeight*d/maxRating;  })
+    .on("click", function(d, i) { getCountyData(data[i].agency); })
     .style("fill", function(d) { return getColor(d, maxRating); });
   // Orient the x and y axis
   var xAxis = d3.svg.axis().scale(xScale).orient("bottom");

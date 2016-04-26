@@ -36,7 +36,32 @@ app.get('/', function(req, res){
 
 //routes
 app.get('/agencies/:id', function(req, res){
-  res.render('agency', {data: req.params});
+  pg.connect(conString, function(err, client, done) {
+
+    if(err) {
+    return console.error('error fetching client from pool', err);
+    }
+
+    var q = 'SELECT c.charge_description, COUNT(*) AS total \
+    FROM cogs121_16_raw.arjis_crimes c \
+    WHERE c.agency LIKE \'' + req.params.id + '\' \
+    GROUP BY c.charge_description \
+    ORDER BY total DESC \
+    LIMIT 5';
+
+    client.query( q, function(err, result) {
+    //call `done()` to release the client back to the pool
+      done();
+
+      if(err) {
+        return console.error('error running query', err);
+      }
+      res.json(result.rows);
+      client.end();
+      return { delphidata: result };
+    });
+  });
+  return { delphidata: "No data found" };
 });
 
 app.get('/agencycrimes', function (req, res) {
