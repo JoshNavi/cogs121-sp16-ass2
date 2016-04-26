@@ -8,10 +8,17 @@
       console.log(err);
       return;
     }
-    console.log(data);
     makeDelphiChart(data);
   });
 })(d3);
+
+getColor = function(d, max) {
+  var color = d3.scale.linear()
+      .domain([0, 0.5, 1])
+      .range(["green", "yellow", "red"]);
+
+  return color(d/max);
+};
 
 makeDelphiChart = function(data) {
   var margin = {top: 20, right: 10, bottom: 100, left: 70},
@@ -35,19 +42,19 @@ makeDelphiChart = function(data) {
     .attr("transform", "translate(" +  margin.left + "," + margin.right + ")");
 
   // Render the chart
-  xScale.domain(data.map(function (d){ return d.agency; }));
+  xScale.domain( data.map(function (d){ return d.agency; }) );
   yScale.domain([maxRating, 0]);
 
   chart
     .selectAll(".bar")
-    .data(data.map(function(d){ return d.total; }))
+    .data(data.map(function(d){ return d.total; }) )
     .enter().append("rect")
     .attr("class", "bar")
     .attr("x", function(d, i) { return ((innerWidth / data.length)*i) + 30; })
     .attr("width", (innerWidth / data.length) - 50)
     .attr("y", function(d) { return innerHeight - (innerHeight*(d / maxRating)); })
-    .attr("height", function(d) { return innerHeight*d/maxRating;  });
-
+    .attr("height", function(d) { return innerHeight*d/maxRating;  })
+    .style("fill", function(d) { return getColor(d, maxRating); });
   // Orient the x and y axis
   var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
   var yAxis = d3.svg.axis().scale(yScale).orient("left");
@@ -65,4 +72,5 @@ makeDelphiChart = function(data) {
   chart
     .append("g")
     .call(yAxis);
+
 };
