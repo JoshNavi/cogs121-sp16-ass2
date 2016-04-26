@@ -26,7 +26,7 @@ getCountyData = function(agency) {
       console.log(err);
       return;
     }
-    makeDelphiChart2(data);
+    makeDonutChart(data);
   });
 }
 
@@ -146,4 +146,43 @@ makeDelphiChart2 = function(data) {
     .append("g")
     .call(yAxis);
 
+};
+
+makeDonutChart = function(data) {
+  var width = 500,
+      height = 500,
+      radius = Math.min(width, height) / 2;
+
+  var max = d3.max( data.map(function(d){ return parseInt(d.total); }) );
+
+  var color = d3.scale.ordinal()
+    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+  var remove = d3
+    .select(".chart2")
+    .select("svg")
+    .remove()
+
+  var chart = d3.select(".chart2")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+  var arc = d3.svg.arc()
+    .innerRadius(radius - 100)
+    .outerRadius(radius);
+
+  var pie = d3.layout.pie()
+    .value(function(d) { return d.total; })
+    .sort(null);
+
+  var path = chart
+    .selectAll("path")
+    .data( pie(data) )
+    .enter()
+    .append("path")
+    .style("fill", function(d, i) { return color(i); })
+    .attr("d", arc);
 };

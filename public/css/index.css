@@ -6,6 +6,8 @@
 
 .chart2 {
   display: inline-block;
+  position: relative;
+  top: -15em;
 }
 
 body {
