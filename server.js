@@ -45,7 +45,7 @@ app.get('/delphidata', function (req, res) {
       FROM cogs121_16_raw.cdph_smoking_prevalence_in_adults_1984_2013 t \
       WHERE t.year = 2003 \
       GROUP BY t.gender \
-      ORDER BY sum ASC';
+      ORDER BY sum DESC';
 
     client.query( q, function(err, result) {
     //call `done()` to release the client back to the pool
