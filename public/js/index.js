@@ -34,7 +34,7 @@ makeDelphiChart = function(data) {
   var w = window.innerWidth;
 
   var margin = {top: 20, right: 0, bottom: 100, left:75},
-      width = (w / 2) - margin.right - margin.left,
+      width = 600 - margin.right - margin.left,
       height = 800 - margin.top - margin.bottom;
 
   var innerWidth  = width; //  - margin.left - margin.right;
@@ -181,18 +181,21 @@ makeDelphiChart = function(data) {
 // };
 
 makeDonutChart = function(data) {
-  var w = window.innerWidth;
 
-  var width = w / 3,
+
+  var width = 1200,
       height = 600,
       radius = Math.min(width, height) / 2;
 
   var max = d3.max( data.map(function(d){ return parseInt(d.total); }) );
   var sum = d3.sum( data.map(function(d){ return parseInt(d.total); }) );
 
+  var color = d3.scale.category20b();
+
+/*
   var color = d3.scale.ordinal()
     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
+*/
   var remove = d3
     .select(".chart2")
     .select("svg")
@@ -211,7 +214,7 @@ makeDonutChart = function(data) {
     .attr("width", width)
     .attr("height", height)
     .append("g")
-    .attr("transform", "translate(" + width / 2 + "," + (radius)  + ")");
+    .attr("transform", "translate(" + width / 4 + "," + (radius)  + ")");
 
   var g = chart
     .selectAll(".arc")
@@ -227,23 +230,41 @@ makeDonutChart = function(data) {
   var xCoor = -60;
   var yCoor = 20;
 
+  var legendRectSize = 50;
+  var legendSpacing = 4;
+
   var legend = chart.selectAll('.legend')
-    .data( data.map(function(d){ return parseInt(d.crimes_description); }) )
+    .data( data )
+    /*(function(d){ console.log(d); return d.crimes_description; }) )*/
     .enter()
     .append('g')
     .attr('class', 'legend')
     .attr('transform', function(d, i) {
       var height = legendRectSize + legendSpacing;
       var offset =  height * color.domain().length / 2;
-      var horz = -2 * legendRectSize;
+      var horz = 6 * legendRectSize;
       var vert = i * height - offset;
       return 'translate(' + horz + ',' + vert + ')';
-    });
+    })
+    .style('float', 'right');
 
-  // g.append("text")
-  //   .attr("transform", function(d) { return "translate(" + xCoor + "," + yCoor + ")"; })
-  //   .style("opacity", "0")
-  //   .style("font-size", "5em")
-  //   .text(function(d) { return (Math.round(d.value/sum * 100) + "% "); });
+
+    legend.append('rect')                                     // NEW
+      .attr('width', legendRectSize)                          // NEW
+      .attr('height', legendRectSize)                         // NEW
+      .style('fill', function(d, i) { return color(i); })                                   // NEW
+      .style('stroke', color);                               // NEW
+
+    legend.append('text')                                     // NEW
+      .attr('x', legendRectSize + legendSpacing)              // NEW
+      .attr('y', legendRectSize - legendSpacing)              // NEW
+      .text(function(d) { return d.charge_description; })
+      .attr("transform", "translate(" + 10 + "," + -15  + ")");
+
+   g.append("text")
+     .attr("transform", function(d) { return "translate(" + xCoor + "," + yCoor + ")"; })
+     .style("opacity", "0")
+     .style("font-size", "5em")
+     .text(function(d) { return (Math.round(d.value/sum * 100) + "% "); });
 
 };
