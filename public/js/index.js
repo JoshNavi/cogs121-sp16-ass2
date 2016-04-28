@@ -169,8 +169,8 @@ makeDonutChart = function(data) {
     .remove()
 
   var arc = d3.svg.arc()
-    .innerRadius(radius - 75)
-    .outerRadius(radius);
+    .innerRadius(radius - 125)
+    .outerRadius(radius - 50);
 
   var pie = d3.layout.pie()
     .value(function(d) { return d.total; })
@@ -181,7 +181,7 @@ makeDonutChart = function(data) {
     .attr("width", width)
     .attr("height", height)
     .append("g")
-    .attr("transform", "translate(" + width / 2 + "," + height * 4 / 9 + ")");
+    .attr("transform", "translate(" + width / 2 + "," + (radius)  + ")");
 
   var g = chart
     .selectAll(".arc")
