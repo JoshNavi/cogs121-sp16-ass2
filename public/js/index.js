@@ -64,11 +64,41 @@ makeDelphiChart = function(data) {
     .attr("class", "bar")
     .attr("id", function (d, i){ return data[i].agency; })
     .attr("x", function(d, i) { return ((innerWidth / data.length)*i) + 10; })
-    .attr("width", (innerWidth / data.length) - 20)
-    .attr("y", function(d) { return innerHeight - (innerHeight*(d / maxRating)); })
-    .attr("height", function(d) { return innerHeight*d/maxRating;  })
+    .attr("width",(innerWidth / data.length) - 20)
+    .attr("y", height)
+    .attr("height", 0)
     .on("click", function(d, i) { getCountyData(data[i].agency); })
-    .style("fill", function(d) { return getColor(d, maxRating); });
+    .style("fill", function(d) { return getColor(d, maxRating); })
+    .transition()
+    .attr("height", function(d) {
+        return innerHeight*d/maxRating;
+    })
+    .attr("y", function(d) {
+         return innerHeight - (innerHeight*(d / maxRating));
+    })
+    .delay(function(d, i) {
+      return i * 20;
+    })
+    .duration(1000)
+    .ease("elastic");
+
+    console.log("finished coloring");
+
+    /*
+    chart.transition()
+    .attr("height", function(d) {
+        return innerHeight*d/maxRating;
+    })
+    .attr("y", function(d) {
+         return innerHeight - (innerHeight*(d / maxRating));
+    })
+    .delay(function(d, i) {
+      return i * 20;
+    })
+    .duration(1000)
+    .ease("elastic");
+    */
+
   // Orient the x and y axis
   var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
   var yAxis = d3.svg.axis().scale(yScale).orient("left");
