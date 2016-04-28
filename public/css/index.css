@@ -5,8 +5,8 @@
 }
 
 .chart2 {
-  float: left;
-  margin-right: 50px;
+  display: inline-block;
+  vertical-align: top;
 }
 
 .chart2 .arc{
