@@ -227,10 +227,23 @@ makeDonutChart = function(data) {
   var xCoor = -60;
   var yCoor = 20;
 
-  g.append("text")
-    .attr("transform", function(d) { return "translate(" + xCoor + "," + yCoor + ")"; })
-    .style("opacity", "0")
-    .style("font-size", "5em")
-    .text(function(d) { return (Math.round(d.value/sum * 100) + "% "); });
+  var legend = chart.selectAll('.legend')
+    .data( data.map(function(d){ return parseInt(d.crimes_description); }) )
+    .enter()
+    .append('g')
+    .attr('class', 'legend')
+    .attr('transform', function(d, i) {
+      var height = legendRectSize + legendSpacing;
+      var offset =  height * color.domain().length / 2;
+      var horz = -2 * legendRectSize;
+      var vert = i * height - offset;
+      return 'translate(' + horz + ',' + vert + ')';
+    });
+
+  // g.append("text")
+  //   .attr("transform", function(d) { return "translate(" + xCoor + "," + yCoor + ")"; })
+  //   .style("opacity", "0")
+  //   .style("font-size", "5em")
+  //   .text(function(d) { return (Math.round(d.value/sum * 100) + "% "); });
 
 };
