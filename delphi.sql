@@ -23,3 +23,9 @@ WHERE c.agency LIKE 'CARLSBAD'
 GROUP BY c.charge_description
 ORDER BY total ASC
 LIMIT 5;
+
+-- Select by day of week
+SELECT EXTRACT(DOW FROM c.activity_date) AS day, Count(*)
+FROM cogs121_16_raw.arjis_crimes c
+GROUP BY day
+ORDER BY day ASC;

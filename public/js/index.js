@@ -1,6 +1,8 @@
 (function(d3) {
   "use strict";
 
+  
+
   // ASSIGNMENT PART 1B
   // Grab the delphi data from the server
   d3.json("/agencycrimes", function(err, data) {
@@ -34,7 +36,7 @@ makeDelphiChart = function(data) {
   var w = window.innerWidth;
 
   var margin = {top: 20, right: 0, bottom: 100, left:75},
-      width = (w / 2) - margin.right - margin.left,
+      width = 600 - margin.right - margin.left,
       height = 800 - margin.top - margin.bottom;
 
   var innerWidth  = width; //  - margin.left - margin.right;
@@ -64,11 +66,41 @@ makeDelphiChart = function(data) {
     .attr("class", "bar")
     .attr("id", function (d, i){ return data[i].agency; })
     .attr("x", function(d, i) { return ((innerWidth / data.length)*i) + 10; })
-    .attr("width", (innerWidth / data.length) - 20)
-    .attr("y", function(d) { return innerHeight - (innerHeight*(d / maxRating)); })
-    .attr("height", function(d) { return innerHeight*d/maxRating;  })
+    .attr("width",(innerWidth / data.length) - 20)
+    .attr("y", height)
+    .attr("height", 0)
     .on("click", function(d, i) { getCountyData(data[i].agency); })
-    .style("fill", function(d) { return getColor(d, maxRating); });
+    .style("fill", function(d) { return getColor(d, maxRating); })
+    .transition()
+    .attr("height", function(d) {
+        return innerHeight*d/maxRating;
+    })
+    .attr("y", function(d) {
+         return innerHeight - (innerHeight*(d / maxRating));
+    })
+    .delay(function(d, i) {
+      return i * 20;
+    })
+    .duration(1000)
+    .ease("bounce");
+
+    console.log("finished coloring");
+
+    /*
+    chart.transition()
+    .attr("height", function(d) {
+        return innerHeight*d/maxRating;
+    })
+    .attr("y", function(d) {
+         return innerHeight - (innerHeight*(d / maxRating));
+    })
+    .delay(function(d, i) {
+      return i * 20;
+    })
+    .duration(1000)
+    .ease("elastic");
+    */
+
   // Orient the x and y axis
   var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
   var yAxis = d3.svg.axis().scale(yScale).orient("left");
@@ -151,26 +183,29 @@ makeDelphiChart = function(data) {
 // };
 
 makeDonutChart = function(data) {
-  var w = window.innerWidth;
 
-  var width = w / 3,
+
+  var width = 1200,
       height = 600,
       radius = Math.min(width, height) / 2;
 
   var max = d3.max( data.map(function(d){ return parseInt(d.total); }) );
   var sum = d3.sum( data.map(function(d){ return parseInt(d.total); }) );
 
+  var color = d3.scale.category20b();
+
+/*
   var color = d3.scale.ordinal()
     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
+*/
   var remove = d3
     .select(".chart2")
     .select("svg")
     .remove()
 
   var arc = d3.svg.arc()
-    .innerRadius(radius - 75)
-    .outerRadius(radius);
+    .innerRadius(radius - 125)
+    .outerRadius(radius - 50);
 
   var pie = d3.layout.pie()
     .value(function(d) { return d.total; })
@@ -181,7 +216,7 @@ makeDonutChart = function(data) {
     .attr("width", width)
     .attr("height", height)
     .append("g")
-    .attr("transform", "translate(" + width / 2 + "," + height * 4 / 9 + ")");
+    .attr("transform", "translate(" + width / 4 + "," + (radius)  + ")");
 
   var g = chart
     .selectAll(".arc")
@@ -197,11 +232,42 @@ makeDonutChart = function(data) {
   var xCoor = -60;
   var yCoor = 20;
 
-  g.append("text")
-    .attr("transform", function(d) { return "translate(" + xCoor + "," + yCoor + ")"; })
-    .style("opacity", "0")
-    .style("font-size", "5em")
-    .text(function(d) { return (Math.round(d.value/sum * 100) + "% "); });
+  var legendRectSize = 50;
+  var legendSpacing = 4;
+
+  var legend = chart.selectAll('.legend')
+    .data( data )
+    /*(function(d){ console.log(d); return d.crimes_description; }) )*/
+    .enter()
+    .append('g')
+    .attr('class', 'legend')
+    .attr('transform', function(d, i) {
+      var height = legendRectSize + legendSpacing;
+      var offset =  height * color.domain().length / 2;
+      var horz = 6 * legendRectSize;
+      var vert = i * height - offset;
+      return 'translate(' + horz + ',' + vert + ')';
+    })
+    .style('float', 'right');
+
+
+    legend.append('rect')                                     // NEW
+      .attr('width', legendRectSize)                          // NEW
+      .attr('height', legendRectSize)                         // NEW
+      .style('fill', function(d, i) { return color(i); })                                   // NEW
+      .style('stroke', color);                               // NEW
+
+    legend.append('text')                                     // NEW
+      .attr('x', legendRectSize + legendSpacing)              // NEW
+      .attr('y', legendRectSize - legendSpacing)              // NEW
+      .text(function(d) { return d.charge_description; })
+      .attr("transform", "translate(" + 10 + "," + -15  + ")");
+
+   g.append("text")
+     .attr("transform", function(d) { return "translate(" + xCoor + "," + yCoor + ")"; })
+     .style("opacity", "0")
+     .style("font-size", "5em")
+     .text(function(d) { return (Math.round(d.value/sum * 100) + "% "); });
 
 
 
