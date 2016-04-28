@@ -1,6 +1,8 @@
 (function(d3) {
   "use strict";
 
+  
+
   // ASSIGNMENT PART 1B
   // Grab the delphi data from the server
   d3.json("/agencycrimes", function(err, data) {
@@ -80,7 +82,7 @@ makeDelphiChart = function(data) {
       return i * 20;
     })
     .duration(1000)
-    .ease("elastic");
+    .ease("bounce");
 
     console.log("finished coloring");
 
