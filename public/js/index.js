@@ -81,8 +81,8 @@ makeDelphiChart = function(data) {
     .delay(function(d, i) {
       return i * 20;
     })
-    .duration(1000)
-    .ease("bounce");
+    .duration(1500)
+    .ease("elastic");
 
     console.log("finished coloring");
 
@@ -228,10 +228,11 @@ makeDonutChart = function(data) {
     .attr("class", "arc");
 
   g.append("path")
-    .attr("fill", function(d, i) { return color(i); })
+    .attr("d", arc)
+    .style("fill", function(d, i) { return color(i); })
     .transition()
       .ease("exp")
-      .duration(1000)
+      .duration(2000)
       .attrTween("d", tweenPie);
 
   function tweenPie(b) {
