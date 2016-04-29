@@ -68,6 +68,9 @@ app.get('/agencies/:id', function(req, res){
   return { delphidata: "No data found" };
 });
 
+/* Gets the top five crimes.
+ *
+ */
 app.get('/agencycrimes', function (req, res) {
   pg.connect(conString, function(err, client, done) {
 
@@ -80,6 +83,37 @@ app.get('/agencycrimes', function (req, res) {
       WHERE c.agency NOT IN (\'SAN DIEGO\', \'SHERIFF\') \
       GROUP BY c.agency \
       ORDER BY total ASC';
+
+    client.query( q, function(err, result) {
+    //call `done()` to release the client back to the pool
+      done();
+
+      if(err) {
+        return console.error('error running query', err);
+      }
+      res.json(result.rows);
+      client.end();
+      return { delphidata: result };
+    });
+  });
+  return { delphidata: "No data found" };
+});
+
+
+/* Gets the top five crimes.
+ *
+ */
+app.get('/timeofcrimes', function (req, res) {
+  pg.connect(conString, function(err, client, done) {
+
+    if(err) {
+    return console.error('error fetching client from pool', err);
+    }
+
+    var q = 'SELECT EXTRACT(HOUR FROM c.activity_date) AS hour, Count(*) \
+             FROM cogs121_16_raw.arjis_crimes c \
+             GROUP BY hour \
+             ORDER BY hour ASC;';
 
     client.query( q, function(err, result) {
     //call `done()` to release the client back to the pool

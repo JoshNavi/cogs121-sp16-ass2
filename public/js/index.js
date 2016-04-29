@@ -1,7 +1,7 @@
 (function(d3) {
   "use strict";
 
-  
+
 
   // ASSIGNMENT PART 1B
   // Grab the delphi data from the server
@@ -11,8 +11,11 @@
       return;
     }
     makeDelphiChart(data);
+    getTimeData();
   });
 })(d3);
+
+
 
 getColor = function(d, max) {
   var color = d3.scale.linear()
@@ -31,6 +34,22 @@ getCountyData = function(agency) {
     makeDonutChart(data);
   });
 }
+
+getTimeData = function() {
+  d3.json('/timeofcrimes', function(err, data) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    console.log(data);
+    makeTimeChart(data);
+  });
+}
+
+
+
+
+
 
 makeDelphiChart = function(data) {
   var w = window.innerWidth;
@@ -181,6 +200,69 @@ makeDelphiChart = function(data) {
 //     .call(yAxis);
 //
 // };
+
+
+makeTimeChart = function(data) {
+  var margin = {top: 20, right: 0, bottom: 100, left:75},
+      width = 900 - margin.right - margin.left,
+      height = 500 - margin.top - margin.bottom;
+
+// Parse the date / time
+//var parseDate = d3.time.format("%d-%b-%y").parse;
+
+
+// Set the ranges
+var x = d3.scale.linear().range([0, width + 20]);
+var y = d3.scale.linear().range([height, 0]);
+
+// Define the axes
+var xAxis = d3.svg.axis().scale(x)
+    .orient("bottom").ticks(30);
+
+var yAxis = d3.svg.axis().scale(y)
+    .orient("left").ticks(10);
+
+// Define the line
+var valueline = d3.svg.line()
+    .x(function(d, i) { return x(data[i].hour); })
+    .y(function(d, i) { return y(parseInt(data[i].count)); });
+
+// Adds the svg canvas
+var svg = d3.select(".chart3")
+    .data(data)
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
+
+    // Get the data
+    // Scale the range of the data
+    x.domain([0, 24]);
+    y.domain([0, d3.max(data, function(d, i) { return parseInt(data[i].count); })]);
+
+
+
+    // Add the valueline path.
+    svg.append("path")
+        .attr("class", "line")
+        .attr("d", valueline(data));
+
+    // Add the X Axis
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    // Add the Y Axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+
+};
+
 
 makeDonutChart = function(data) {
 

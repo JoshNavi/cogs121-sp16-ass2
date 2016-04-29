@@ -59,3 +59,9 @@ path:hover {
   fill: brown;
   fill-opacity: .7;
 }
+
+path { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
