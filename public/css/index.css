@@ -5,8 +5,10 @@
 }
 
 .chart2 {
-  float: left;
-  margin-right: 50px;
+  display: inline-block;
+  vertical-align: top;
+  width: 1200px;
+  height: 600px;
 }
 
 .chart2 .arc{
@@ -37,7 +39,7 @@ body {
   fill: black;
 }
 
-html, body, #mapid {
+html, body {
   height: 100% !important;
   width: 100% !important;
   margin: 0 !important;
@@ -46,22 +48,4 @@ html, body, #mapid {
 
 svg {
   position: relative;
-}
-
-path {
-  fill: #000;
-  fill-opacity: .2;
-  stroke: #fff;
-  stroke-width: 1.5px;
-}
-
-path:hover {
-  fill: brown;
-  fill-opacity: .7;
-}
-
-path { 
-    stroke: steelblue;
-    stroke-width: 2;
-    fill: none;
 }
