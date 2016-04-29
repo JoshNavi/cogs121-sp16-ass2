@@ -84,6 +84,13 @@ makeDelphiChart = function(data) {
     .duration(1500)
     .ease("bounce");
 
+    // var tip = d3.tip()
+    //   .attr('class','d3-tip')
+    //   .offset([-10,0])
+    //   .html(function(d) {
+    //       return d.total;
+    //   });
+
     var bars = d3.selectAll(".bar");
     bars
       .on("mouseover", function(d,i) {
@@ -96,6 +103,8 @@ makeDelphiChart = function(data) {
             })
             .duration(200)
             .ease("bounce");
+
+
       })
       .on("mouseout", function(d,i) {
           d3.select(this).transition()
