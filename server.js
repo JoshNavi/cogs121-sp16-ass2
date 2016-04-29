@@ -31,12 +31,16 @@ app.set('port', process.env.PORT || 3000);
 
 //routes
 app.get('/', function(req, res){
-  res.render('index');
+  res.render('new_index');
 });
 
 app.get('/map', function(req, res){
   res.render('map');
 });
+
+app.get('/old_index', function(req, res){
+  res.render('index');
+})
 
 //routes
 app.get('/agencies/:id', function(req, res){
@@ -68,6 +72,9 @@ app.get('/agencies/:id', function(req, res){
   return { delphidata: "No data found" };
 });
 
+/* Gets the top five crimes.
+ *
+ */
 app.get('/agencycrimes', function (req, res) {
   pg.connect(conString, function(err, client, done) {
 
@@ -152,6 +159,37 @@ app.get('/communities/:id', function(req, res){
   });
   return { delphidata: "No data found" };
 });
+
+/* Gets the top five crimes.
+ *
+ */
+app.get('/timeofcrimes', function (req, res) {
+  pg.connect(conString, function(err, client, done) {
+
+    if(err) {
+    return console.error('error fetching client from pool', err);
+    }
+
+    var q = 'SELECT EXTRACT(HOUR FROM c.activity_date) AS hour, Count(*) \
+             FROM cogs121_16_raw.arjis_crimes c \
+             GROUP BY hour \
+             ORDER BY hour ASC';
+
+    client.query( q, function(err, result) {
+    //call `done()` to release the client back to the pool
+      done();
+
+      if(err) {
+        return console.error('error running time query', err);
+      }
+      res.json(result.rows);
+      client.end();
+      return { delphidata: result };
+    });
+  });
+  return { delphidata: "No data found" };
+});
+
 
 http.createServer(app).listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));

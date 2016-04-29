@@ -1,26 +1,39 @@
 (function(d3) {
   "use strict";
 
-  
-
-  // ASSIGNMENT PART 1B
-  // Grab the delphi data from the server
-  d3.json("/agencycrimes", function(err, data) {
+  d3.json("/timeofcrimes", function(err, data) {
     if (err) {
       console.log(err);
       return;
     }
     makeDelphiChart(data);
   });
+
+  d3.json('/timeofcrimes', function(err, data) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    makeTimeChart(data);
+  });
 })(d3);
+
 
 getColor = function(d, max) {
   var color = d3.scale.linear()
-      .domain([0, 0.5, 1])
-      .range(["green", "yellow", "red"]);
+  .domain([0.1, .5])
+  .range(["white", "orange", "darkred"]);
 
   return color(d/max);
 };
+
+$.fn.scrollView = function () {
+  return this.each(function () {
+    $('html, body').animate({
+      scrollTop: $(this).offset().top
+    }, 500);
+  });
+}
 
 getCountyData = function(agency) {
   d3.json('/agencies/' + agency, function(err, data) {
@@ -32,16 +45,28 @@ getCountyData = function(agency) {
   });
 }
 
+// getTimeData = function() {
+//   d3.json('/timeofcrimes', function(err, data) {
+//     if (err) {
+//       console.log(err);
+//       return;
+//     }
+//     console.log(data);
+//     makeTimeChart(data);
+//   });
+// }
+
 makeDelphiChart = function(data) {
   var w = window.innerWidth;
 
-  var margin = {top: 20, right: 0, bottom: 100, left:75},
-      width = 600 - margin.right - margin.left,
-      height = 800 - margin.top - margin.bottom;
+  var margin = {top: 0, right: 0, bottom: 100, left:75},
+      width = 1000 - margin.right - margin.left,
+      height = 700 - margin.top - margin.bottom;
 
   var innerWidth  = width; //  - margin.left - margin.right;
   var innerHeight = height - margin.top  - margin.bottom;
-  var maxRating = d3.max( data.map(function(d){ return parseInt(d.total); }) );
+  var maxRating = d3.max( data.map(function(d, i){ console.log(data[i].count); return parseInt(data[i].count); }) );
+  console.log(maxRating);
 
   var xScale = d3.scale.ordinal().rangeRoundBands([0, innerWidth], 0);
   var yScale = d3.scale.linear().range([0, innerHeight]);
@@ -55,21 +80,36 @@ makeDelphiChart = function(data) {
     .append("g")
     .attr("transform", "translate(" +  margin.left + "," + margin.right + ")");
 
+    console.log(data[1].hour);
   // Render the chart
-  xScale.domain( data.map(function (d){ return d.agency; }) );
+  xScale.domain( data.map(function (d, i){ return data[i].hour; }) );
   yScale.domain([maxRating, 0]);
+
+  var countNum = d3.select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("visibility", "hidden");
 
   chart
     .selectAll(".bar")
-    .data(data.map(function(d){ return d.total; }) )
+    .data(data.map(function(d, i){ return data[i].count; }) )
     .enter().append("rect")
     .attr("class", "bar")
-    .attr("id", function (d, i){ return data[i].agency; })
+    .attr("id", function (d, i){ return data[i].count; })
     .attr("x", function(d, i) { return ((innerWidth / data.length)*i) + 10; })
     .attr("width",(innerWidth / data.length) - 20)
     .attr("y", height)
     .attr("height", 0)
-    .on("click", function(d, i) { getCountyData(data[i].agency); })
+    .on('mouseover', function(d, i) { console.log(data[i].count);
+      return countNum.style("visibility", "visible").text("Crimes: " + data[i].count);
+    })
+    .on('mouseout', function() {
+      return countNum.style("visibility", "hidden");
+    })
+    .on("mousemove", function(){return countNum.style("top",
+    (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
+    })
     .style("fill", function(d) { return getColor(d, maxRating); })
     .transition()
     .attr("height", function(d) {
@@ -83,6 +123,7 @@ makeDelphiChart = function(data) {
     })
     .duration(1500)
     .ease("bounce");
+    // .ease("elastic");
 
     // var tip = d3.tip()
     //   .attr('class','d3-tip')
@@ -150,13 +191,14 @@ makeDelphiChart = function(data) {
     .attr("transform", "translate(" + 0 + "," + innerHeight + ")")
     .call(xAxis)
     .selectAll("text")
-    .attr("transform", "rotate(" + -45 + ")")
     .style("text-anchor", "end");
 
   // TODO: Append Y axis
   chart
     .append("g")
     .call(yAxis);
+
+
 
 };
 
@@ -221,6 +263,69 @@ makeDelphiChart = function(data) {
 //
 // };
 
+
+makeTimeChart = function(data) {
+  var margin = {top: 20, right: 0, bottom: 100, left:75},
+      width = 900 - margin.right - margin.left,
+      height = 500 - margin.top - margin.bottom;
+
+// Parse the date / time
+//var parseDate = d3.time.format("%d-%b-%y").parse;
+
+
+// Set the ranges
+var x = d3.scale.linear().range([0, width + 20]);
+var y = d3.scale.linear().range([height, 0]);
+
+// Define the axes
+var xAxis = d3.svg.axis().scale(x)
+    .orient("bottom").ticks(30);
+
+var yAxis = d3.svg.axis().scale(y)
+    .orient("left").ticks(10);
+
+// Define the line
+var valueline = d3.svg.line()
+    .x(function(d, i) { return x(data[i].hour); })
+    .y(function(d, i) { return y(parseInt(data[i].count)); });
+
+// Adds the svg canvas
+var svg = d3.select(".chart3")
+    .data(data)
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
+
+    // Get the data
+    // Scale the range of the data
+    x.domain([0, 24]);
+    y.domain([0, d3.max(data, function(d, i) { return parseInt(data[i].count); })]);
+
+
+
+    // Add the valueline path.
+    svg.append("path")
+        .attr("class", "line")
+        .attr("d", valueline(data));
+
+    // Add the X Axis
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    // Add the Y Axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+
+};
+
+
 makeDonutChart = function(data) {
 
 
@@ -237,7 +342,7 @@ makeDonutChart = function(data) {
   var color = d3.scale.ordinal()
     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 */
-  var remove = d3
+   var remove = d3
     .select(".chart2")
     .select("svg")
     .remove()
@@ -247,8 +352,10 @@ makeDonutChart = function(data) {
     .outerRadius(radius - 50);
 
   var pie = d3.layout.pie()
-    .value(function(d) { return d.total; })
-    .sort(null);
+    .sort(null)
+    .startAngle(1.1 * Math.PI)
+    .endAngle(3.1 * Math.PI)
+    .value(function(d) { return d.total; });
 
   var chart = d3.select(".chart2")
     .append("svg")
@@ -266,7 +373,16 @@ makeDonutChart = function(data) {
 
   g.append("path")
     .attr("d", arc)
-    .style("fill", function(d, i) { return color(i); });
+    .style("fill", function(d, i) { return color(i); })
+    .transition()
+      .ease("exp")
+      .duration(2000)
+      .attrTween("d", tweenPie);
+
+  function tweenPie(b) {
+    var i = d3.interpolate({startAngle: 1.1 * Math.PI, endAngle: 1.1 * Math.PI}, b);
+    return function(t) { return arc(i(t));};
+  }
 
   var xCoor = -60;
   var yCoor = 20;
@@ -307,9 +423,5 @@ makeDonutChart = function(data) {
      .style("opacity", "0")
      .style("font-size", "5em")
      .text(function(d) { return (Math.round(d.value/sum * 100) + "% "); });
-
-
-
-
 
 };

@@ -35,11 +35,16 @@ body {
   opacity: 1.0 !important;
 }
 
-.bar:hover {
-  fill: black;
+
+.arc {
+  opacity: 0.7 !important;
 }
 
-html, body, #mapid {
+.arc:hover {
+  opacity: 1.0 !important;
+}
+
+html, body {
   height: 100% !important;
   width: 100% !important;
   margin: 0 !important;
@@ -50,6 +55,18 @@ svg {
   position: relative;
 }
 
+.map_piece {
+  fill-opacity: .7 !important;
+  stroke: #fff !important;
+  stroke-width: 1px !important;
+}
+
+.map_piece:hover {
+  fill-opacity: 1.0 !important;  
+}
+
+
+/*
 path {
   fill: #000;
   fill-opacity: .6;
@@ -59,5 +76,8 @@ path {
 
 path:hover {
   fill: brown;
-  fill-opacity: 1.0;
+  fill-opacity: .7;
 }
+/*
+
+

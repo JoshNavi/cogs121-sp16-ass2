@@ -11,5 +11,17 @@
     "express-handlebars": "^1.2.2",
     "express-session": "^1.10.4",
     "pg": "^4.5.3"
-  }
+  },
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoshNavi/cogs121-sp16-ass2.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JoshNavi/cogs121-sp16-ass2/issues"
+  },
+  "homepage": "https://github.com/JoshNavi/cogs121-sp16-ass2#readme",
+  "description": ""
 }

@@ -10,6 +10,14 @@
   });
 })(d3);
 
+$.fn.scrollView = function () {
+  return this.each(function () {
+    $('html, body').animate({
+      scrollTop: $(this).offset().top
+    }, 500);
+  });
+}
+
 getCommunityCrimes = function(community) {
   d3.json('/communities/' + community, function(err, data) {
     if (err) {
@@ -17,6 +25,8 @@ getCommunityCrimes = function(community) {
       return;
     }
     makeDonutChart(data);
+    if(data.length > 0)
+      $("#donutChartModal").modal()
   });
 }
 
@@ -39,13 +49,16 @@ makeDonutChart = function(data) {
     .select("svg")
     .remove()
 
+
   var arc = d3.svg.arc()
     .innerRadius(radius - 125)
     .outerRadius(radius - 50);
 
   var pie = d3.layout.pie()
-    .value(function(d) { return d.total; })
-    .sort(null);
+    .sort(null)
+    .startAngle(1.1 * Math.PI)
+    .endAngle(3.1 * Math.PI)
+    .value(function(d) { return d.total; });
 
   var chart = d3.select(".chart2")
     .append("svg")
@@ -63,7 +76,16 @@ makeDonutChart = function(data) {
 
   g.append("path")
     .attr("d", arc)
-    .style("fill", function(d, i) { return color(i); });
+    .style("fill", function(d, i) { return donutColor(i); })
+    .transition()
+      .ease("exp")
+      .duration(2000)
+      .attrTween("d", tweenPie);
+
+  function tweenPie(b) {
+    var i = d3.interpolate({startAngle: 1.1 * Math.PI, endAngle: 1.1 * Math.PI}, b);
+    return function(t) { return arc(i(t));};
+  }
 
   var xCoor = -60;
   var yCoor = 20;
@@ -81,7 +103,7 @@ makeDonutChart = function(data) {
       var height = legendRectSize + legendSpacing;
       var offset =  height * color.domain().length / 2;
       var horz = 6 * legendRectSize;
-      var vert = i * height - offset;
+      var vert = i * height - offset - 150;
       return 'translate(' + horz + ',' + vert + ')';
     })
     .style('float', 'right');
@@ -90,7 +112,7 @@ makeDonutChart = function(data) {
     legend.append('rect')                                     // NEW
       .attr('width', legendRectSize)                          // NEW
       .attr('height', legendRectSize)                         // NEW
-      .style('fill', function(d, i) { return color(i); })                                   // NEW
+      .style('fill', function(d, i) { return donutColor(i); })                                   // NEW
       .style('stroke', color);                               // NEW
 
     legend.append('text')                                     // NEW
@@ -114,7 +136,7 @@ function makeMap(data) {
 
   // console.log(max);
 
-  var map = L.map('mapid', { zoomControl: false }).setView([32.969, -117.334], 10);
+  var map = L.map('mapid', { zoomControl: false }).setView([32.969, -116.9], 9);
 
 
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -145,8 +167,10 @@ d3.json("https://raw.githubusercontent.com/Saebyuckbaan/cogs121-sp16-ass2/master
     .enter()
     .append("path")
     .attr("id", function(d){ return d.properties.NAME; } )
-    .on("mouseover", function(d){ printInfo(d.properties.NAME, data); } )
-    .on("click", function(d){ getCommunityCrimes(d.properties.NAME); } );
+    .attr("class", "map_piece")
+    .on("click", function(d){ getCommunityCrimes(d.properties.NAME); } )
+    .on("mouseover", function(d){ printInfo(d.properties.NAME, data); } );
+
 
   map.on("viewreset", reset);
   reset();
@@ -179,27 +203,31 @@ d3.json("https://raw.githubusercontent.com/Saebyuckbaan/cogs121-sp16-ass2/master
 function printInfo(name, data) {
   for(var i in data) {
     if( data[i].community == name ) {
-      console.log(name);
-      console.log(data[i].total);
+      $('#initialText').css('display', 'none');
+      $('#crimeInfoText').css('display', 'block');
+      $('.communityName').text(name);
+      $('#numberOfCrimes').text(data[i].total);
+    }
+  }
+}
+
+function mapColor(name, data, max) {
+  var color = d3.scale.linear()
+  .domain([0, .02, .2])
+  .range(["white", "orange", "darkred"]);
+
+  for(var i in data) {
+    if( data[i].community == name ) {
+      return color(data[i].total/max);
     }
   }
 
   return "black";
 }
 
-function mapColor(name, data, max) {
+function donutColor(data) {
   var color = d3.scale.linear()
-  .domain([0, .05, .2])
-  .range(["red", "yellow", "green"]);
-
-  for(var i in data) {
-    if( data[i].community == name ) {
-      console.log(name);
-      // console.log(data[i].total + ", " + max);
-      // console.log(data[i].total/max);
-      return color(data[i].total/max);
-    }
-  }
-
-  return "black";
+  .domain([0, 4])
+  .range(["orange", "brown"]);
+  return color(data);
 }
