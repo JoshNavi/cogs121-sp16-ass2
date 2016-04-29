@@ -173,14 +173,14 @@ app.get('/timeofcrimes', function (req, res) {
     var q = 'SELECT EXTRACT(HOUR FROM c.activity_date) AS hour, Count(*) \
              FROM cogs121_16_raw.arjis_crimes c \
              GROUP BY hour \
-             ORDER BY hour ASC;';
+             ORDER BY hour ASC';
 
     client.query( q, function(err, result) {
     //call `done()` to release the client back to the pool
       done();
 
       if(err) {
-        return console.error('error running query', err);
+        return console.error('error running time query', err);
       }
       res.json(result.rows);
       client.end();

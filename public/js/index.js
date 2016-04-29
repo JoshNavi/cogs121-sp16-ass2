@@ -10,8 +10,9 @@
       console.log(err);
       return;
     }
-    makeDelphiChart(data);
     getTimeData();
+
+    makeDelphiChart(data);
   });
 })(d3);
 
