@@ -1,7 +1,7 @@
 (function(d3) {
   "use strict";
 
-  d3.json("/agencycrimes", function(err, data) {
+  d3.json("/timeofcrimes", function(err, data) {
     if (err) {
       console.log(err);
       return;
@@ -19,11 +19,10 @@
 })(d3);
 
 
-
 getColor = function(d, max) {
   var color = d3.scale.linear()
-      .domain([0, 0.5, 1])
-      .range(["green", "yellow", "red"]);
+      .domain([0, .14, .28, .42,  .56, .70])
+          .range(["purple", "blue", "green", "orange", "yellow", "red"]);
 
   return color(d/max);
 };
@@ -60,13 +59,14 @@ getCountyData = function(agency) {
 makeDelphiChart = function(data) {
   var w = window.innerWidth;
 
-  var margin = {top: 20, right: 0, bottom: 100, left:75},
-      width = 600 - margin.right - margin.left,
-      height = 800 - margin.top - margin.bottom;
+  var margin = {top: 0, right: 0, bottom: 100, left:75},
+      width = 1000 - margin.right - margin.left,
+      height = 700 - margin.top - margin.bottom;
 
   var innerWidth  = width; //  - margin.left - margin.right;
   var innerHeight = height - margin.top  - margin.bottom;
-  var maxRating = d3.max( data.map(function(d){ return parseInt(d.total); }) );
+  var maxRating = d3.max( data.map(function(d, i){ console.log(data[i].count); return parseInt(data[i].count); }) );
+  console.log(maxRating);
 
   var xScale = d3.scale.ordinal().rangeRoundBands([0, innerWidth], 0);
   var yScale = d3.scale.linear().range([0, innerHeight]);
@@ -80,21 +80,36 @@ makeDelphiChart = function(data) {
     .append("g")
     .attr("transform", "translate(" +  margin.left + "," + margin.right + ")");
 
+    console.log(data[1].hour);
   // Render the chart
-  xScale.domain( data.map(function (d){ return d.agency; }) );
+  xScale.domain( data.map(function (d, i){ return data[i].hour; }) );
   yScale.domain([maxRating, 0]);
+
+  var countNum = d3.select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("visibility", "hidden");
 
   chart
     .selectAll(".bar")
-    .data(data.map(function(d){ return d.total; }) )
+    .data(data.map(function(d, i){ return data[i].count; }) )
     .enter().append("rect")
     .attr("class", "bar")
-    .attr("id", function (d, i){ return data[i].agency; })
+    .attr("id", function (d, i){ return data[i].count; })
     .attr("x", function(d, i) { return ((innerWidth / data.length)*i) + 10; })
     .attr("width",(innerWidth / data.length) - 20)
     .attr("y", height)
     .attr("height", 0)
-    .on("click", function(d, i) { getCountyData(data[i].agency); $('.chart2').scrollView();})
+    .on('mouseover', function(d, i) { console.log(data[i].count);
+      return countNum.style("visibility", "visible").text("Crimes: " + data[i].count);
+    })
+    .on('mouseout', function() {
+      return countNum.style("visibility", "hidden");
+    })
+    .on("mousemove", function(){return countNum.style("top",
+    (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
+    })
     .style("fill", function(d) { return getColor(d, maxRating); })
     .transition()
     .attr("height", function(d) {
@@ -136,13 +151,14 @@ makeDelphiChart = function(data) {
     .attr("transform", "translate(" + 0 + "," + innerHeight + ")")
     .call(xAxis)
     .selectAll("text")
-    .attr("transform", "rotate(" + -45 + ")")
     .style("text-anchor", "end");
 
   // TODO: Append Y axis
   chart
     .append("g")
     .call(yAxis);
+
+
 
 };
 

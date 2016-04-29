@@ -74,6 +74,11 @@ a:hover{
 .btn{
 	border: 2px #4e4e4e solid;
 	font-size:1.5em;
+	border-radius: 5px;
+	background-color: #ffffff;
+	opacity: 0.6;
+	filter: alpha(opacity=60); /* For IE8 and earlier */
+	padding-bottom: -20%;
 }
 #section0{
 	height:100%;
@@ -90,8 +95,8 @@ a:hover{
 
 }
 #section1{
-	background-color:#2B2B2B;
-	color:#fff;
+	background-color: #f7f7f7;
+	color: black;
 	vertical-align: middle;
 	font-size: 1.5em;
 	padding-top: 5%;
@@ -111,12 +116,19 @@ a:hover{
 #s1container{
 	position: relative;
 	width:80%;
-	text-align: left;
+	text-align: center;
 	vertical-align: middle;
 	overflow: auto;
-
 }
 
+#s1container h2 {
+	text-shadow: 2px 2px lightgrey;
+}
+
+#s1container h3 {
+	color: #515151;
+	margin-bottom: 5%;
+}
 /*#s1text{
 	position: relative;
 	top: 50%;
@@ -146,9 +158,12 @@ h2{
 	position: relative;
 	width:80%;
 	text-align: center;
+
 }
-#s2container h1{
+#s2container h2{
 	text-align: center;
+	color: black;
+	text-shadow: 2px 2px lightgrey;
 }
 #section3{
 	background-color:#2B2B2B;
@@ -188,7 +203,8 @@ h2{
 
 #name
 {
-	color:#5f3a3a;
+	color: black;
+	text-shadow: 2px 2px lightgrey;
 	font-size: 6em;
 	font-family: 'Port Lligat Slab', sans-serif;
 	font-weight: lighter;
@@ -199,8 +215,6 @@ h2{
 
 	margin: auto;
 }
-
-
 
 #namesmaller.moveright
 {
@@ -225,10 +239,9 @@ h2{
 #subtext
 {
 	font-family: 'Slabo 27px', 'MFYueHei', sans-serif;
-	color:#5f3a3a;
+	color: black;
 	font-weight: lighter;
 	font-size: 30px;
-
 }
 
 
