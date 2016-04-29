@@ -21,8 +21,8 @@
 
 getColor = function(d, max) {
   var color = d3.scale.linear()
-      .domain([0, .14, .28, .42,  .56, .70])
-          .range(["purple", "blue", "green", "orange", "yellow", "red"]);
+  .domain([0.1, .5])
+  .range(["white", "orange", "darkred"]);
 
   return color(d/max);
 };
