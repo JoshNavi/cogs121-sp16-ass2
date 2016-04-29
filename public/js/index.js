@@ -198,7 +198,7 @@ makeDonutChart = function(data) {
   var color = d3.scale.ordinal()
     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 */
-  var remove = d3
+   var remove = d3
     .select(".chart2")
     .select("svg")
     .remove()
@@ -208,8 +208,10 @@ makeDonutChart = function(data) {
     .outerRadius(radius - 50);
 
   var pie = d3.layout.pie()
-    .value(function(d) { return d.total; })
-    .sort(null);
+    .sort(null)
+    .startAngle(1.1 * Math.PI)
+    .endAngle(3.1 * Math.PI)
+    .value(function(d) { return d.total; });
 
   var chart = d3.select(".chart2")
     .append("svg")
@@ -226,8 +228,16 @@ makeDonutChart = function(data) {
     .attr("class", "arc");
 
   g.append("path")
-    .attr("d", arc)
-    .style("fill", function(d, i) { return color(i); });
+    .attr("fill", function(d, i) { return color(i); })
+    .transition()
+      .ease("exp")
+      .duration(1000)
+      .attrTween("d", tweenPie);
+
+  function tweenPie(b) {
+    var i = d3.interpolate({startAngle: 1.1 * Math.PI, endAngle: 1.1 * Math.PI}, b);
+    return function(t) { return arc(i(t));};
+  }
 
   var xCoor = -60;
   var yCoor = 20;

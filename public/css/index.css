@@ -39,7 +39,7 @@ body {
 
 html, body, #mapid {
   height: 100% !important;
-  width: 100% !important;
+  width: 80% !important;
   margin: 0 !important;
   padding: 0 !important;
 }
@@ -56,6 +56,6 @@ path {
 }
 
 path:hover {
-  fill: brown;
+  fill: red;
   fill-opacity: .7;
 }
