@@ -50,12 +50,12 @@ svg {
 
 path {
   fill: #000;
-  fill-opacity: .2;
+  fill-opacity: .6;
   stroke: #fff;
   stroke-width: 1.5px;
 }
 
 path:hover {
   fill: brown;
-  fill-opacity: .7;
+  fill-opacity: 1.0;
 }

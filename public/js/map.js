@@ -1,6 +1,119 @@
 (function(d3) {
   "use strict";
 
+  var communityData = d3.json("/communities", function(err, data) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    makeMap(data);
+  });
+})(d3);
+
+getCommunityCrimes = function(community) {
+  d3.json('/communities/' + community, function(err, data) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    makeDonutChart(data);
+  });
+}
+
+makeDonutChart = function(data) {
+  var width = 1200,
+      height = 600,
+      radius = Math.min(width, height) / 2;
+
+  var max = d3.max( data.map(function(d){ return parseInt(d.total); }) );
+  var sum = d3.sum( data.map(function(d){ return parseInt(d.total); }) );
+
+  var color = d3.scale.category20b();
+
+/*
+  var color = d3.scale.ordinal()
+    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+*/
+  var remove = d3
+    .select(".chart2")
+    .select("svg")
+    .remove()
+
+  var arc = d3.svg.arc()
+    .innerRadius(radius - 125)
+    .outerRadius(radius - 50);
+
+  var pie = d3.layout.pie()
+    .value(function(d) { return d.total; })
+    .sort(null);
+
+  var chart = d3.select(".chart2")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g")
+    .attr("transform", "translate(" + width / 4 + "," + (radius)  + ")");
+
+  var g = chart
+    .selectAll(".arc")
+    .data( pie(data) )
+    .enter()
+    .append("g")
+    .attr("class", "arc");
+
+  g.append("path")
+    .attr("d", arc)
+    .style("fill", function(d, i) { return color(i); });
+
+  var xCoor = -60;
+  var yCoor = 20;
+
+  var legendRectSize = 50;
+  var legendSpacing = 4;
+
+  var legend = chart.selectAll('.legend')
+    .data( data )
+    /*(function(d){ console.log(d); return d.crimes_description; }) )*/
+    .enter()
+    .append('g')
+    .attr('class', 'legend')
+    .attr('transform', function(d, i) {
+      var height = legendRectSize + legendSpacing;
+      var offset =  height * color.domain().length / 2;
+      var horz = 6 * legendRectSize;
+      var vert = i * height - offset;
+      return 'translate(' + horz + ',' + vert + ')';
+    })
+    .style('float', 'right');
+
+
+    legend.append('rect')                                     // NEW
+      .attr('width', legendRectSize)                          // NEW
+      .attr('height', legendRectSize)                         // NEW
+      .style('fill', function(d, i) { return color(i); })                                   // NEW
+      .style('stroke', color);                               // NEW
+
+    legend.append('text')                                     // NEW
+      .attr('x', legendRectSize + legendSpacing)              // NEW
+      .attr('y', legendRectSize - legendSpacing)              // NEW
+      .text(function(d) { return d.charge_description; })
+      .attr("transform", "translate(" + 10 + "," + -15  + ")");
+
+   g.append("text")
+     .attr("transform", function(d) { return "translate(" + xCoor + "," + yCoor + ")"; })
+     .style("opacity", "0")
+     .style("font-size", "5em")
+     .text(function(d) { return (Math.round(d.value/sum * 100) + "% "); });
+
+};
+
+function makeMap(data) {
+  // console.log(data);
+
+  var max = d3.max( data.map(function(d){ return parseInt(d.total); }) );
+
+  // console.log(max);
+
   var map = L.map('mapid', { zoomControl: false }).setView([32.969, -117.334], 10);
 
 
@@ -11,23 +124,28 @@
   }).addTo(map);
 
   map.dragging.disable();
-map.touchZoom.disable();
-map.doubleClickZoom.disable();
-map.scrollWheelZoom.disable();
-map.keyboard.disable();
+  map.touchZoom.disable();
+  map.doubleClickZoom.disable();
+  map.scrollWheelZoom.disable();
+  map.keyboard.disable();
 
-var svg = d3.select(map.getPanes().overlayPane).append("svg"),
-    g = svg.append("g").attr("class", "leaflet-zoom-hide");
+  var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+      g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-d3.json("./data/san-diego.geojson", function(error, collection) {
+d3.json("https://raw.githubusercontent.com/Saebyuckbaan/cogs121-sp16-ass2/master/sdcounty.json", function(error, collection) {
   if (error) throw error;
+
+  // console.log(collection);
 
   var transform = d3.geo.transform({point: projectPoint}),
       path = d3.geo.path().projection(transform);
 
   var feature = g.selectAll("path")
-      .data(collection.features)
-    .enter().append("path");
+    .data(collection.features)
+    .enter()
+    .append("path")
+    .attr("id", function(d){ return d.properties.NAME; } )
+    .on("click", function(d){ getCommunityCrimes(d.properties.NAME); } );
 
   map.on("viewreset", reset);
   reset();
@@ -45,7 +163,8 @@ d3.json("./data/san-diego.geojson", function(error, collection) {
 
     g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
 
-    feature.attr("d", path);
+    feature.attr("d", path)
+    .style("fill", function(d, i){ return mapColor(d.properties.NAME, data, max); } );
   }
 
   // Use Leaflet to implement a D3 geometric transformation.
@@ -54,5 +173,21 @@ d3.json("./data/san-diego.geojson", function(error, collection) {
     this.stream.point(point.x, point.y);
   }
 });
+};
 
-})(d3);
+function mapColor(name, data, max) {
+  var color = d3.scale.linear()
+  .domain([0, .05, .2])
+  .range(["red", "yellow", "green"]);
+
+  for(var i in data) {
+    if( data[i].community == name ) {
+      console.log(name);
+      // console.log(data[i].total + ", " + max);
+      // console.log(data[i].total/max);
+      return color(data[i].total/max);
+    }
+  }
+
+  return "black";
+}
