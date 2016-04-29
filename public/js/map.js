@@ -49,13 +49,16 @@ makeDonutChart = function(data) {
     .select("svg")
     .remove()
 
+
   var arc = d3.svg.arc()
     .innerRadius(radius - 125)
     .outerRadius(radius - 50);
 
   var pie = d3.layout.pie()
-    .value(function(d) { return d.total; })
-    .sort(null);
+    .sort(null)
+    .startAngle(1.1 * Math.PI)
+    .endAngle(3.1 * Math.PI)
+    .value(function(d) { return d.total; });
 
   var chart = d3.select(".chart2")
     .append("svg")
@@ -73,7 +76,16 @@ makeDonutChart = function(data) {
 
   g.append("path")
     .attr("d", arc)
-    .style("fill", function(d, i) { return donutColor(i); });
+    .style("fill", function(d, i) { return donutColor(i); })
+    .transition()
+      .ease("exp")
+      .duration(2000)
+      .attrTween("d", tweenPie);
+
+  function tweenPie(b) {
+    var i = d3.interpolate({startAngle: 1.1 * Math.PI, endAngle: 1.1 * Math.PI}, b);
+    return function(t) { return arc(i(t));};
+  }
 
   var xCoor = -60;
   var yCoor = 20;
