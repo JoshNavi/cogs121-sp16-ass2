@@ -145,6 +145,7 @@ d3.json("https://raw.githubusercontent.com/Saebyuckbaan/cogs121-sp16-ass2/master
     .enter()
     .append("path")
     .attr("id", function(d){ return d.properties.NAME; } )
+    .on("mouseover", function(d){ printInfo(d.properties.NAME, data); } )
     .on("click", function(d){ getCommunityCrimes(d.properties.NAME); } );
 
   map.on("viewreset", reset);
@@ -174,6 +175,17 @@ d3.json("https://raw.githubusercontent.com/Saebyuckbaan/cogs121-sp16-ass2/master
   }
 });
 };
+
+function printInfo(name, data) {
+  for(var i in data) {
+    if( data[i].community == name ) {
+      console.log(name);
+      console.log(data[i].total);
+    }
+  }
+
+  return "black";
+}
 
 function mapColor(name, data, max) {
   var color = d3.scale.linear()
