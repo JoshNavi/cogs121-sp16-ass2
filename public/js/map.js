@@ -213,8 +213,8 @@ function printInfo(name, data) {
 
 function mapColor(name, data, max) {
   var color = d3.scale.linear()
-  .domain([0, .01, .02, .04, .2])
-  .range(["blue", "green", "orange", "yellow", "red"]);
+  .domain([0, .02, .2])
+  .range(["white", "orange", "darkred"]);
 
   for(var i in data) {
     if( data[i].community == name ) {
@@ -227,7 +227,7 @@ function mapColor(name, data, max) {
 
 function donutColor(data) {
   var color = d3.scale.linear()
-  .domain([0, 1, 2, 3, 4])
-  .range(["blue", "green", "orange", "yellow", "red"]);
+  .domain([0, 4])
+  .range(["orange", "brown"]);
   return color(data);
 }
