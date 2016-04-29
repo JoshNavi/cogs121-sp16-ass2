@@ -81,10 +81,40 @@ makeDelphiChart = function(data) {
     .delay(function(d, i) {
       return i * 20;
     })
-    .duration(1000)
+    .duration(1500)
     .ease("bounce");
 
+    var bars = d3.selectAll(".bar");
+    bars
+      .on("mouseover", function(d,i) {
+          d3.select(this).transition()
+            .attr("height", function(d) {
+              return (innerHeight*d/maxRating)-10;
+            })
+            .attr("y", function(d) {
+              return innerHeight - (innerHeight*(d/maxRating))-10;
+            })
+            .duration(200)
+            .ease("bounce");
+      })
+      .on("mouseout", function(d,i) {
+          d3.select(this).transition()
+            .attr("height", function(d) {
+              return (innerHeight*d/maxRating);
+            })
+            .attr("y", function(d) {
+              return innerHeight - (innerHeight*(d/maxRating));
+            })
+            .duration(200)
+            .ease("bounce");
+      });
+      // .on
+    
+
     console.log("finished coloring");
+
+
+
 
     /*
     chart.transition()
