@@ -167,6 +167,7 @@ d3.json("https://raw.githubusercontent.com/Saebyuckbaan/cogs121-sp16-ass2/master
     .enter()
     .append("path")
     .attr("id", function(d){ return d.properties.NAME; } )
+    .attr("class", "map_piece")
     .on("click", function(d){ getCommunityCrimes(d.properties.NAME); } )
     .on("mouseover", function(d){ printInfo(d.properties.NAME, data); } );
 
