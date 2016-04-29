@@ -203,8 +203,6 @@ d3.json("https://raw.githubusercontent.com/Saebyuckbaan/cogs121-sp16-ass2/master
 function printInfo(name, data) {
   for(var i in data) {
     if( data[i].community == name ) {
-      console.log(name);
-      console.log(data[i].total);
       $('#initialText').css('display', 'none');
       $('#crimeInfoText').css('display', 'block');
       $('.communityName').text(name);
@@ -220,9 +218,6 @@ function mapColor(name, data, max) {
 
   for(var i in data) {
     if( data[i].community == name ) {
-      console.log(name);
-      // console.log(data[i].total + ", " + max);
-      // console.log(data[i].total/max);
       return color(data[i].total/max);
     }
   }

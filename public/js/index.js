@@ -1,18 +1,20 @@
 (function(d3) {
   "use strict";
 
-
-
-  // ASSIGNMENT PART 1B
-  // Grab the delphi data from the server
   d3.json("/agencycrimes", function(err, data) {
     if (err) {
       console.log(err);
       return;
     }
-    getTimeData();
-
     makeDelphiChart(data);
+  });
+
+  d3.json('/timeofcrimes', function(err, data) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    makeTimeChart(data);
   });
 })(d3);
 
@@ -44,21 +46,16 @@ getCountyData = function(agency) {
   });
 }
 
-getTimeData = function() {
-  d3.json('/timeofcrimes', function(err, data) {
-    if (err) {
-      console.log(err);
-      return;
-    }
-    console.log(data);
-    makeTimeChart(data);
-  });
-}
-
-
-
-
-
+// getTimeData = function() {
+//   d3.json('/timeofcrimes', function(err, data) {
+//     if (err) {
+//       console.log(err);
+//       return;
+//     }
+//     console.log(data);
+//     makeTimeChart(data);
+//   });
+// }
 
 makeDelphiChart = function(data) {
   var w = window.innerWidth;
