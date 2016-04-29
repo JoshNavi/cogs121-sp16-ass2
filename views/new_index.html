@@ -1,0 +1,120 @@
+
+<center>
+	<!--<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#"></a>
+			</div>
+
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<div id = "namesmaller"><a href="#">asdf</a></div>
+				<ul class="nav navbar-nav navbar-left">
+					<li id = "li2"><a href="#link1">link 1</a></li>
+					<li id = "li3"><a href="#link2">link 2</a></li>
+					<li id = "li4"><a href="#link3">link 3</a></li>
+
+				</ul>
+
+			</div>
+		</div>
+	</nav>-->
+
+	<div id = "background">
+		<div id = "section0">
+			<div id = "s0container">
+				<div id = "name"><img src = "./images/arrestMe_5f3a3a.png" style="height:1em; margin-right:5%; display:inline">arrestMe</div>
+				<div id = "subtext">Police officers are always keeping our best interests in mind,
+so we created a web-app to help these officers visualize their crime data.
+We have taken data from DELPHI and represented it in a very visual fashion;
+we have our crime-density map on the right side, as well as a graph showing the number of crimes logged per
+agency. Feel free to click on an agency in the bar graph to learn which top charge descriptions took place.
+				<br><br></div>
+				<a type = "button" class = "btn btn-secondary" id = "gobutton">LET'S GO</a>
+			</div>
+		</div>
+	</div>
+	<div class = "divider"></div>
+	<div id = "section1" class = "section">
+		<div id = "s1container">
+			<h1>Crime in San Diego Communities</h1>
+			<div class = "container-fluid">
+				<div class = "row" style="width:100%;">
+					<div class = "col-md-6">
+							Police officers are always keeping our best interests in mind,
+			so we created a web-app to help these officers visualize their crime data.
+			We have taken data from DELPHI and represented it in a very visual fashion;
+			we have our crime-density map on the right side, as well as a graph showing the number of crimes logged per
+			agency. Feel free to click on an agency in the bar graph to learn which top charge descriptions took place.
+					</div>
+					<div class = "col-md-6" >
+						<div id="mapid" style="width:100% !important; height:500px !important;"></div><br><br>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class = "divider"></div>
+	<div id = "section2" class = "section">
+		<div id = "s2container">
+			<h1>Top 5 Crimes by Agency</h1>
+			<br>
+			<!--<div class = "rTable">
+				<div class = "rTableRow">
+					<div class = "rTableCell">
+						<div class="chart" style="width:100% !important"></div>
+					</div>
+					<div class = "rTableCell">
+						<div class="chart2" style="width:100% !important"></div>
+					</div>
+				</div>
+			</div>-->
+			<center>
+		</center>
+		</div>
+	</div>
+
+
+
+</center>
+<div class="modal fade" id="donutChartModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title" id="exampleModalLabel">Top 5 Crimes</h2>
+
+            </div>
+            <div class="modal-body">
+              <center>
+								<div class="chart2"></div>
+							</center>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="./js/d3.min.js"></script>
+<script src="./js/index.js"></script>
+<script src="./js/leaflet.js"></script>
+<script src="./js/map.js"></script>
+<script>
+	$(function(){
+		$.fn.scrollView = function () {
+		  return this.each(function () {
+		    $('html, body').animate({
+		      scrollTop: $(this).offset().top
+		    }, 500);
+		  });
+		}
+		$('#gobutton').click(function(){
+			$('#section1').scrollView();
+		});
+	});
+
+</script>

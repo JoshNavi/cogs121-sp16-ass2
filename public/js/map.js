@@ -10,6 +10,14 @@
   });
 })(d3);
 
+$.fn.scrollView = function () {
+  return this.each(function () {
+    $('html, body').animate({
+      scrollTop: $(this).offset().top
+    }, 500);
+  });
+}
+
 getCommunityCrimes = function(community) {
   d3.json('/communities/' + community, function(err, data) {
     if (err) {
@@ -114,7 +122,7 @@ function makeMap(data) {
 
   // console.log(max);
 
-  var map = L.map('mapid', { zoomControl: false }).setView([32.969, -117.334], 10);
+  var map = L.map('mapid', { zoomControl: false }).setView([32.969, -116.9], 9);
 
 
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -145,7 +153,7 @@ d3.json("https://raw.githubusercontent.com/Saebyuckbaan/cogs121-sp16-ass2/master
     .enter()
     .append("path")
     .attr("id", function(d){ return d.properties.NAME; } )
-    .on("click", function(d){ getCommunityCrimes(d.properties.NAME); } );
+    .on("click", function(d){ getCommunityCrimes(d.properties.NAME); $("#donutChartModal").modal()} );
 
   map.on("viewreset", reset);
   reset();
