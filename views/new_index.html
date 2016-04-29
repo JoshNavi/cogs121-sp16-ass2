@@ -33,7 +33,7 @@
 so we created a web-app to help these officers visualize their crime data.
 We have taken data from DELPHI and represented it in a very visual fashion;
 we have our crime-density map on the right side, as well as a graph showing the number of crimes logged per
-agency. Feel free to click on an agency in the bar graph to learn which top charge descriptions took place.
+agency. <!--Feel free to click on an agency in the bar graph to learn which top charge descriptions took place.-->
 				<br><br></div>
 				<a type = "button" class = "btn btn-secondary" id = "gobutton">LET'S GO</a>
 			</div>
@@ -45,9 +45,9 @@ agency. Feel free to click on an agency in the bar graph to learn which top char
 			<h1>Crime in San Diego Communities</h1>
 			<div class = "container-fluid">
 				<div class = "row" style="width:100%;">
-					<div class = "col-md-6" style="font-size:1.5em; padding: 20px; padding-right: 5%; text-align:right;">
-							<div id = "initialText">Hover over colored areas on the map to see the number of crimes in that area.</div>
-							<div id = "crimeInfoText" style="display:none;"><span class = "communityName" style="font-size:2em"></span><div id ="numberOfCrimes" style="font-size:6em; font-family:'Port Lligat Slab', sans-serif"></div> crimes in some year. <br>Click to see the top five crimes in <span class = "communityName"></span>.</div>
+					<div class = "col-md-6" style="font-size:1.5em; padding: 0 5% 5% 5%;  text-align:right;">
+							<div id = "initialText">Hover over colored areas on the map to see the number of crimes in that area. Darker reds mean more crimes in that area.</div>
+							<div id = "crimeInfoText" style="display:none;"><span class = "communityName" style="font-family:'Port Lligat Slab', sans-serif; font-size:2em"></span><div id ="numberOfCrimes" style="font-size:6em; font-family:'Port Lligat Slab', sans-serif"></div> crimes from September 20, 2013 to March 19, 2014. Click to see the top five crimes in <span class = "communityName"></span>.</div>
 					</div>
 					<div class = "col-md-6" >
 						<div id="mapid" style="width:100% !important; height:500px !important;"></div><br><br>
@@ -59,8 +59,9 @@ agency. Feel free to click on an agency in the bar graph to learn which top char
 	<div class = "divider"></div>
 	<div id = "section2" class = "section">
 		<div id = "s2container">
-			<h1>Top 5 Crimes by Agency</h1>
+			<h1>Total Crimes Committed by Hour</h1>
 			<br>
+			<div class = "chart3" style="width: 100% !important; height: 500px !important"></div>
 			<!--<div class = "rTable">
 				<div class = "rTableRow">
 					<div class = "rTableCell">
@@ -85,7 +86,7 @@ agency. Feel free to click on an agency in the bar graph to learn which top char
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
-                <h2 class="modal-title" id="exampleModalLabel">Top 5 Crimes</h2>
+                <center><h2 class="modal-title" id="exampleModalLabel" style="font-size:3em">Top 5 Crimes in <span class="communityName"></span></h2></center>
 
             </div>
             <div class="modal-body">

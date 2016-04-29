@@ -103,7 +103,7 @@ makeDonutChart = function(data) {
       var height = legendRectSize + legendSpacing;
       var offset =  height * color.domain().length / 2;
       var horz = 6 * legendRectSize;
-      var vert = i * height - offset;
+      var vert = i * height - offset - 150;
       return 'translate(' + horz + ',' + vert + ')';
     })
     .style('float', 'right');
