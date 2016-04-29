@@ -170,7 +170,6 @@ d3.json("https://raw.githubusercontent.com/Saebyuckbaan/cogs121-sp16-ass2/master
     .on("click", function(d){ getCommunityCrimes(d.properties.NAME); } )
     .on("mouseover", function(d){ printInfo(d.properties.NAME, data); } );
 
-  var cities = svg.append("g").atrr("class", "cityDiv");
 
   map.on("viewreset", reset);
   reset();

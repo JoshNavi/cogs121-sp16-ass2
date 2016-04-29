@@ -144,8 +144,8 @@ h2{
 }
 #s2container{
 	position: relative;
-	/*width:60%;*/
-	text-align: left;
+	width:80%;
+	text-align: center;
 }
 #s2container h1{
 	text-align: center;
