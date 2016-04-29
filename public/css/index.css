@@ -39,7 +39,7 @@ body {
   fill: black;
 }
 
-html, body, #mapid {
+html, body {
   height: 100% !important;
   width: 80% !important;
   margin: 0 !important;

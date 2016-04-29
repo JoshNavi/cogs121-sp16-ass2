@@ -38,6 +38,10 @@ app.get('/map', function(req, res){
   res.render('map');
 });
 
+app.get('/new_index', function(req, res){
+  res.render('new_index');
+})
+
 //routes
 app.get('/agencies/:id', function(req, res){
   pg.connect(conString, function(err, client, done) {

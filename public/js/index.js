@@ -1,7 +1,7 @@
 (function(d3) {
   "use strict";
 
-  
+
 
   // ASSIGNMENT PART 1B
   // Grab the delphi data from the server
@@ -21,6 +21,14 @@ getColor = function(d, max) {
 
   return color(d/max);
 };
+
+$.fn.scrollView = function () {
+  return this.each(function () {
+    $('html, body').animate({
+      scrollTop: $(this).offset().top
+    }, 500);
+  });
+}
 
 getCountyData = function(agency) {
   d3.json('/agencies/' + agency, function(err, data) {
@@ -69,7 +77,7 @@ makeDelphiChart = function(data) {
     .attr("width",(innerWidth / data.length) - 20)
     .attr("y", height)
     .attr("height", 0)
-    .on("click", function(d, i) { getCountyData(data[i].agency); })
+    .on("click", function(d, i) { getCountyData(data[i].agency); $('.chart2').scrollView();})
     .style("fill", function(d) { return getColor(d, maxRating); })
     .transition()
     .attr("height", function(d) {
