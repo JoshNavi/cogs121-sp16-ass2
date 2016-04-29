@@ -7,6 +7,8 @@
 .chart2 {
   display: inline-block;
   vertical-align: top;
+  width: 1200px;
+  height: 600px;
 }
 
 .chart2 .arc{
@@ -50,12 +52,12 @@ svg {
 
 path {
   fill: #000;
-  fill-opacity: .2;
+  fill-opacity: .6;
   stroke: #fff;
   stroke-width: 1.5px;
 }
 
 path:hover {
   fill: brown;
-  fill-opacity: .7;
+  fill-opacity: 1.0;
 }
