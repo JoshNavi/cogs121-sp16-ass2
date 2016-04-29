@@ -25,6 +25,8 @@ getCommunityCrimes = function(community) {
       return;
     }
     makeDonutChart(data);
+    if(data.length > 0)
+      $("#donutChartModal").modal()
   });
 }
 
@@ -71,7 +73,7 @@ makeDonutChart = function(data) {
 
   g.append("path")
     .attr("d", arc)
-    .style("fill", function(d, i) { return color(i); });
+    .style("fill", function(d, i) { return donutColor(i); });
 
   var xCoor = -60;
   var yCoor = 20;
@@ -98,7 +100,7 @@ makeDonutChart = function(data) {
     legend.append('rect')                                     // NEW
       .attr('width', legendRectSize)                          // NEW
       .attr('height', legendRectSize)                         // NEW
-      .style('fill', function(d, i) { return color(i); })                                   // NEW
+      .style('fill', function(d, i) { return donutColor(i); })                                   // NEW
       .style('stroke', color);                               // NEW
 
     legend.append('text')                                     // NEW
@@ -153,7 +155,7 @@ d3.json("https://raw.githubusercontent.com/Saebyuckbaan/cogs121-sp16-ass2/master
     .enter()
     .append("path")
     .attr("id", function(d){ return d.properties.NAME; } )
-    .on("click", function(d){ getCommunityCrimes(d.properties.NAME); $("#donutChartModal").modal()} )
+    .on("click", function(d){ getCommunityCrimes(d.properties.NAME); } )
     .on("mouseover", function(d){ printInfo(d.properties.NAME, data); } );
 
   map.on("viewreset", reset);
@@ -189,7 +191,12 @@ function printInfo(name, data) {
     if( data[i].community == name ) {
       console.log(name);
       console.log(data[i].total);
+      $('#initialText').css('display', 'none');
+      $('#crimeInfoText').css('display', 'block');
+      $('.communityName').text(name);
+      $('#numberOfCrimes').text(data[i].total);
     }
+
   }
 
   return "black";
@@ -197,8 +204,8 @@ function printInfo(name, data) {
 
 function mapColor(name, data, max) {
   var color = d3.scale.linear()
-  .domain([0, .05, .2])
-  .range(["red", "yellow", "green"]);
+  .domain([0, .02, .2])
+  .range(["white", "orange", "darkred"]);
 
   for(var i in data) {
     if( data[i].community == name ) {
@@ -210,4 +217,11 @@ function mapColor(name, data, max) {
   }
 
   return "black";
+}
+
+function donutColor(data) {
+  var color = d3.scale.linear()
+  .domain([0, 4])
+  .range(["orange", "brown"]);
+  return color(data);
 }

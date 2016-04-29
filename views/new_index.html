@@ -45,12 +45,9 @@ agency. Feel free to click on an agency in the bar graph to learn which top char
 			<h1>Crime in San Diego Communities</h1>
 			<div class = "container-fluid">
 				<div class = "row" style="width:100%;">
-					<div class = "col-md-6">
-							Police officers are always keeping our best interests in mind,
-			so we created a web-app to help these officers visualize their crime data.
-			We have taken data from DELPHI and represented it in a very visual fashion;
-			we have our crime-density map on the right side, as well as a graph showing the number of crimes logged per
-			agency. Feel free to click on an agency in the bar graph to learn which top charge descriptions took place.
+					<div class = "col-md-6" style="font-size:1.5em; padding: 20px; padding-right: 5%; text-align:right;">
+							<div id = "initialText">Hover over colored areas on the map to see the number of crimes in that area.</div>
+							<div id = "crimeInfoText" style="display:none;"><span class = "communityName" style="font-size:2em"></span><div id ="numberOfCrimes" style="font-size:6em; font-family:'Port Lligat Slab', sans-serif"></div> crimes in some year. <br>Click to see the top five crimes in <span class = "communityName"></span>.</div>
 					</div>
 					<div class = "col-md-6" >
 						<div id="mapid" style="width:100% !important; height:500px !important;"></div><br><br>
