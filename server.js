@@ -31,15 +31,15 @@ app.set('port', process.env.PORT || 3000);
 
 //routes
 app.get('/', function(req, res){
-  res.render('index');
+  res.render('new_index');
 });
 
 app.get('/map', function(req, res){
   res.render('map');
 });
 
-app.get('/new_index', function(req, res){
-  res.render('new_index');
+app.get('/old_index', function(req, res){
+  res.render('index');
 })
 
 //routes
