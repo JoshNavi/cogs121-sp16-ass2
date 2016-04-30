@@ -59,31 +59,53 @@ getCountyData = function(agency) {
 makeDelphiChart = function(data) {
   var w = window.innerWidth;
 
+  var outerWidth = 1000,
+      outerHeight = 700;
+
   var margin = {top: 0, right: 0, bottom: 100, left:75},
-      width = 1000 - margin.right - margin.left,
-      height = 700 - margin.top - margin.bottom;
+      width = outerWidth - margin.right - margin.left,
+      height = outerHeight - margin.top - margin.bottom;
 
   var innerWidth  = width; //  - margin.left - margin.right;
   var innerHeight = height - margin.top  - margin.bottom;
-  var maxRating = d3.max( data.map(function(d, i){ console.log(data[i].count); return parseInt(data[i].count); }) );
-  console.log(maxRating);
+  var maxRating = d3.max(data, function(d, i){ return parseInt(data[i].count); });
 
-  var xScale = d3.scale.ordinal().rangeRoundBands([0, innerWidth], 0);
-  var yScale = d3.scale.linear().range([0, innerHeight]);
+  var padding = .5;
+  /*
+  var svg = d3.select(".chart3")
+    .attr("width", outerWidth)
+    .attr("height", outerHeight);
+
+  var g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  var xAxisG = g.append("g")
+    .attr("transform", "translate(0", + height + ")");
+  var yAxisG = g.append("g");
+  */
+
+  var xScale = d3.scale.ordinal().rangeBands([0, width], padding);
+  var yScale = d3.scale.linear().range([height, 0]);
+ 
+  var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+  var yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+
+
+  xScale.domain( data.map(function (d){ return d.hour; }) );
+  yScale.domain([0, maxRating]);
+
 
   // Define the chart
+  
   var chart = d3
     .select(".chart")
     .append("svg")
-    .attr("width", width + margin.right + margin.left)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("width", outerWidth)
+    .attr("height", outerHeight)
     .append("g")
     .attr("transform", "translate(" +  margin.left + "," + margin.right + ")");
 
-    console.log(data[1].hour);
   // Render the chart
-  xScale.domain( data.map(function (d, i){ return data[i].hour; }) );
-  yScale.domain([maxRating, 0]);
 
   var countNum = d3.select("body")
     .append("div")
@@ -91,14 +113,29 @@ makeDelphiChart = function(data) {
     .style("z-index", "10")
     .style("visibility", "hidden");
 
+/*
+  var chart = g.selectAll(".bar").data(data);
+
+  chart.enter().append("rect")
+    .attr("class", "bar")
+    .attr("id", function(d, i) { return data[i].count; })
+    .attr("width", xScale.rangeBand());
+
+  chart
+    .attr("x", function(d, i) { return ((innerWidth / data.length)*i) + 10; })
+    .attr("y", height)
+    .attr("height", 0);
+*/
+
+
+
   chart
     .selectAll(".bar")
     .data(data.map(function(d, i){ return data[i].count; }) )
     .enter().append("rect")
-    .attr("class", "bar")
     .attr("id", function (d, i){ return data[i].count; })
-    .attr("x", function(d, i) { return ((innerWidth / data.length)*i) + 10; })
-    .attr("width",(innerWidth / data.length) - 20)
+    .attr("x", function(d, i) { return xScale(data[i].hour); } )
+    .attr("width", xScale.rangeBand())
     .attr("y", height)
     .attr("height", 0)
     .on('mouseover', function(d, i) { console.log(data[i].count);
@@ -112,11 +149,11 @@ makeDelphiChart = function(data) {
     })
     .style("fill", function(d) { return getColor(d, maxRating); })
     .transition()
-    .attr("height", function(d) {
-        return innerHeight*d/maxRating;
+    .attr("height", function(d, i) {
+        return height - yScale(data[i].count);
     })
-    .attr("y", function(d) {
-         return innerHeight - (innerHeight*(d / maxRating));
+    .attr("y", function(d, i) {
+         return yScale(data[i].count);
     })
     .delay(function(d, i) {
       return i * 20;
@@ -141,17 +178,12 @@ makeDelphiChart = function(data) {
     .ease("elastic");
     */
 
-  // Orient the x and y axis
-  var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-  var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
   // TODO: Append X axis
   chart
     .append("g")
-    .attr("transform", "translate(" + 0 + "," + innerHeight + ")")
+    .attr("transform", "translate(" + 0 + "," + height + ")")
     .call(xAxis)
-    .selectAll("text")
-    .style("text-anchor", "end");
 
   // TODO: Append Y axis
   chart
@@ -225,25 +257,69 @@ makeDelphiChart = function(data) {
 
 
 makeTimeChart = function(data) {
+  var outerWidth = 900,
+      outerHeight = 500;
+
   var margin = {top: 20, right: 0, bottom: 100, left:75},
-      width = 900 - margin.right - margin.left,
-      height = 500 - margin.top - margin.bottom;
+      width = outerWidth - margin.right - margin.left,
+      height = outerHeight - margin.top - margin.bottom;
+
+  var barPadding = 0.2;
+
+  var maxCrime = d3.max( data.map(function(d, i){ console.log(data[i].count); return parseInt(data[i].count); }) );
 
 // Parse the date / time
 //var parseDate = d3.time.format("%d-%b-%y").parse;
+var svg = d3.select(".chart3")
+    .attr("width", outerWidth)
+    .attr("height", outerHeight);
 
+var g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var xAxisG = g.append("g")
+    .attr("transform", "translate(0", + height + ")");
+var yAxisG = g.append("g");
 
-// Set the ranges
-var x = d3.scale.linear().range([0, width + 20]);
-var y = d3.scale.linear().range([height, 0]);
+var xScale = d3.scale.ordinal().rangeRoundBands([0, width]);
+var yScale = d3.scale.linear().range([height, 0]);
 
-// Define the axes
-var xAxis = d3.svg.axis().scale(x)
+var xAxis = d3.svg.axis().scale(xScale)
     .orient("bottom").ticks(30);
 
-var yAxis = d3.svg.axis().scale(y)
+var yAxis = d3.svg.axis().scale(yScale)
     .orient("left").ticks(10);
 
+xScale.domain( data.map ( function(d) { return d.hour; }));
+yScale.domain( [0, maxCrime] );
+
+yAxisG.call(xAxis);
+yAxisG.call(yAxis);
+
+var bars = g.selectAll("rect").data(data);
+
+bars.enter().append("rect")
+  attr("width", xScale.rangeBand());
+
+bars
+  .attr("x", function(d) { return xScale(d.hour); })
+  .attr("y", function(d) { return yScale(d.count); })
+  .attr("height", function(d) { return height - yScale(d.count); });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 // Define the line
 var valueline = d3.svg.line()
     .x(function(d, i) { return x(data[i].hour); })
@@ -281,7 +357,7 @@ var svg = d3.select(".chart3")
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
-
+*/
 
 };
 
@@ -336,7 +412,7 @@ makeDonutChart = function(data) {
     .style("fill", function(d, i) { return color(i); })
     .transition()
       .ease("exp")
-      .duration(2000)
+      .duration(1000)
       .attrTween("d", tweenPie);
 
   function tweenPie(b) {
