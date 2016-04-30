@@ -79,7 +79,7 @@ makeDonutChart = function(data) {
     .style("fill", function(d, i) { return donutColor(i); })
     .transition()
       .ease("exp")
-      .duration(2000)
+      .duration(1200)
       .attrTween("d", tweenPie);
 
   function tweenPie(b) {
