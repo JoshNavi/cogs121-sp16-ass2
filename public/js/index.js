@@ -62,7 +62,7 @@ makeDelphiChart = function(data) {
   var outerWidth = 1000,
       outerHeight = 700;
 
-  var margin = {top: 0, right: 0, bottom: 100, left:75},
+  var margin = {top: 0, right: 0, bottom: 100, left:150},
       width = outerWidth - margin.right - margin.left,
       height = outerHeight - margin.top - margin.bottom;
 
@@ -87,6 +87,7 @@ makeDelphiChart = function(data) {
   var yScale = d3.scale.linear().range([height, 0]);
  
   var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
   var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
 
@@ -104,6 +105,7 @@ makeDelphiChart = function(data) {
     .attr("height", outerHeight)
     .append("g")
     .attr("transform", "translate(" +  margin.left + "," + margin.right + ")");
+
 
   // Render the chart
 
@@ -138,7 +140,7 @@ makeDelphiChart = function(data) {
     .attr("width", xScale.rangeBand())
     .attr("y", height)
     .attr("height", 0)
-    .on('mouseover', function(d, i) { console.log(data[i].count);
+    .on('mouseover', function(d, i) { 
       return countNum.style("visibility", "visible").text("Crimes: " + data[i].count);
     })
     .on('mouseout', function() {
@@ -173,11 +175,11 @@ makeDelphiChart = function(data) {
     bars
       .on("mouseover", function(d,i) {
           d3.select(this).transition()
-            .attr("height", function(d) {
-              return (innerHeight*d/maxRating)-10;
+            .attr("height", function(d,i) {
+              return height-yScale(data[i].count)-10;
             })
-            .attr("y", function(d) {
-              return innerHeight - (innerHeight*(d/maxRating))-10;
+            .attr("y", function(d,i) {
+              return yScale(data[i].count)-10;
             })
             .duration(200)
             .ease("bounce");
@@ -186,11 +188,11 @@ makeDelphiChart = function(data) {
       })
       .on("mouseout", function(d,i) {
           d3.select(this).transition()
-            .attr("height", function(d) {
-              return (innerHeight*d/maxRating);
+            .attr("height", function(d,i) {
+              return height-yScale(data[i].count);
             })
-            .attr("y", function(d) {
-              return innerHeight - (innerHeight*(d/maxRating));
+            .attr("y", function(d,i) {
+              return yScale(data[i].count);
             })
             .duration(200)
             .ease("bounce");
@@ -225,6 +227,19 @@ makeDelphiChart = function(data) {
     .attr("transform", "translate(" + 0 + "," + height + ")")
     .call(xAxis)
 
+    chart.append("text")      // text label for the x axis
+        .attr("x", width/2 )
+        .attr("y",  height+70 )
+        .style("text-anchor", "middle")
+        .text("Time of day (hours)");
+
+      chart.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -120)
+        .attr("x",-height/2)
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Number of Crimes Committed");
   // TODO: Append Y axis
   chart
     .append("g")
@@ -336,6 +351,32 @@ yAxisG.call(xAxis);
 yAxisG.call(yAxis);
 
 var bars = g.selectAll("rect").data(data);
+// var bars2 = d3.selectAll(".bar");
+//     bars2
+//       .on("mouseover", function(d,i) {
+//           d3.select(this).transition()
+//             .attr("height", function(d) {
+//               return height-yScale(d.count)+100;
+//             })
+//             .attr("y", function(d) {
+//               return yScale(d.count)+100;
+//             })
+//             .duration(200)
+//             .ease("bounce");
+
+
+//       })
+//       .on("mouseout", function(d,i) {
+//           d3.select(this).transition()
+//             .attr("height", function(d) {
+//               return height-yScale(d.count);
+//             })
+//             .attr("y", function(d) {
+//               return yScale(d.count);
+//             })
+//             .duration(200)
+//             .ease("bounce");
+//       });
 
 bars.enter().append("rect")
   attr("width", xScale.rangeBand());

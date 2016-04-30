@@ -30,7 +30,11 @@
 			<div id = "s0container">
 				<div id = "name">
 					<!--<img src="/images/arrestme_logo.jpg" style="height:1em; margin-right:5%; display:inline"> -->arrestMe</div>
-				<div id = "subtext">Our goal is to help law enforcement officers efficiently patrol areas that are unsafe. <!--Feel free to click on an agency in the bar graph to learn which top charge descriptions took place.-->
+				<div id = "subtext">Our goal is to help law enforcement officers efficiently patrol areas that are unsafe. Police officers are always keeping our best interests in mind,
+so we created a web-app to help these officers visualize their crime data.
+We have taken data from DELPHI and represented it in a very visual fashion;
+we have our crime-density map on the right side, as well as a graph showing the number of crimes logged per
+agency. Click the button below and let's get started by looking at the top crimes per community!<!--Feel free to click on an agency in the bar graph to learn which top charge descriptions took place.-->
 				<br><br></div>
 				<a type = "button" class = "btn btn-secondary" id = "gobutton">LET'S GO</a>
 			</div>
@@ -43,8 +47,8 @@
 			<h3>September 20, 2013 to March 19, 2014</h3>
 			<div class = "container-fluid">
 				<div class = "row" style="width:100%;">
-					<div class = "col-md-6" style="font-size:1.5em; padding: 0 5% 5% 5%;  text-align:left;">
-							<div id = "initialText">Hover over colored areas on the map to see the number of crimes in that area. Darker reds mean more crimes in that area.</div>
+					<div class = "col-md-6" style="font-size:1.45em; padding: 0 5% 5% 5%;  text-align:left;">
+							<div id = "initialText">Hover over colored areas on the map to see the number of crimes in that area. Darker reds mean more crimes in that area, while greyed-out areas on the map means that there was not enough information available. Click on an area to see the top 5 crimes. </div>
 							<div id = "crimeInfoText" style="display:none;"><span class = "communityName" style="font-family:'Port Lligat Slab', sans-serif; font-size:2em"></span><div id ="numberOfCrimes" style="font-size:6em; font-family:'Port Lligat Slab', sans-serif"></div> Click <span class = "communityName"></span></br>to see the top five crimes.</div>
 					</div>
 					<div class = "col-md-6" >
